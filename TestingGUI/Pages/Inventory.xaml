@@ -1,0 +1,109 @@
+﻿<Page x:Class="TestingGUI.Pages.Inventory"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:TestingGUI.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="480" d:DesignWidth="640"
+      Title="Inventory">
+
+    <Grid Name="MainGrid">
+        <StackPanel Width="640">
+            <StackPanel Orientation="Horizontal" Height="50">
+                <StackPanel>
+                    <Label Content="Quantity"/>
+                    <TextBox Text="{Binding Quantity}" Name="StackSize" Width="50" Height="50"/>
+                </StackPanel>
+                <Button Content="Add" Width="50" Name="AddItem" Click="AddItem_Click"></Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Width="640">
+                <StackPanel>
+                    <Label Content="Shop" HorizontalAlignment="Stretch" />
+                    <ListView Name="ChoicesList" Background="AliceBlue" Grid.Column="0" ItemsSource="{Binding Choices}" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Name="ChoicesItem" BorderBrush="Black" BorderThickness="1" MouseMove="ChoicesItem_MouseMove" MouseDown="ChoicesItem_MouseDown">
+                                    <StackPanel Orientation="Horizontal" Height="30">
+                                        <Image Source="{Binding Image}"/>
+                                        <Label Content="{Binding Name}"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Inventory"/>
+                        <Label Content="{Binding Items.FreeSlots}"/>
+                        <Label Content="/" />
+                        <Label Content="{Binding Items.MaxSize}"/>
+                    </StackPanel>
+                    <ListView Name="InventoryItems" Background="BurlyWood" ItemsSource="{Binding Items}" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden" SelectionChanged="ListView_SelectionChanged" SelectionMode="Single" AllowDrop="True" Drop="InventoryItems_Drop">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Left" 
+                                            Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
+                                            ItemWidth="{Binding (ListView.View).ItemWidth, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                            MinWidth="30"
+                                            ItemHeight="{Binding (ListView.View).ItemHeight, RelativeSource={RelativeSource AncestorType=ListView}}"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate DataType="ListViewItem">
+                                <Border  Name="InventoryItem" BorderBrush="Black" BorderThickness="1" AllowDrop="True" Drop="InventoryItem_Drop" MouseMove="InventoryItem_MouseMove" MouseDown="InventoryItem_MouseDown">
+                                    <Grid MinWidth="30" MinHeight="30">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="{Binding Item.Image}" Height="30"/>
+                                            <Label Content="{Binding Item.Name}"/>
+                                            <Label Content="{Binding Stack.Current}"/>
+                                            <Label Content=" / "/>
+                                            <Label Content="{Binding Stack.Max}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <Button Content="Delete" Width="150" Height="50" Name="DeleteItem" Click="DeleteItem_Click" AllowDrop="True" Drop="Delete_Drop"></Button>
+                </StackPanel>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Bank"/>
+                        <Label Content="{Binding Items2.FreeSlots}"/>
+                        <Label Content="/" />
+                        <Label Content="{Binding Items2.MaxSize}"/>
+                    </StackPanel>
+                    <ListView Name="InventoryItems2" Background="Honeydew" ItemsSource="{Binding Items2}" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden" SelectionChanged="ListView_SelectionChanged" SelectionMode="Single" AllowDrop="True" Drop="InventoryItems_Drop">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Left" 
+                                            Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
+                                            ItemWidth="{Binding (ListView.View).ItemWidth, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                            MinWidth="30"
+                                            ItemHeight="{Binding (ListView.View).ItemHeight, RelativeSource={RelativeSource AncestorType=ListView}}"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate DataType="ListViewItem">
+                                <Border  Name="Inventory2Item" BorderBrush="Black" BorderThickness="1" AllowDrop="True" Drop="InventoryItem_Drop" MouseMove="Inventory2Item_MouseMove" MouseDown="Inventory2Item_MouseDown">
+                                    <Grid MinWidth="30" MinHeight="30">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="{Binding Item.Image}" Height="30"/>
+                                            <Label Content="{Binding Item.Name}"/>
+                                            <Label Content="{Binding Stack.Current}"/>
+                                            <Label Content=" / "/>
+                                            <Label Content="{Binding Stack.Max}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <Button Content="Delete" Width="150" Height="50" Name="DeleteItem2" Click="DeleteItem2_Click" AllowDrop="True" Drop="Delete_Drop"></Button>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

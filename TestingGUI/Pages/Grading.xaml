@@ -1,0 +1,70 @@
+﻿<Page x:Class="TestingGUI.Pages.Grading"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:TestingGUI.Pages"
+      xmlns:cat="clr-namespace:Grading;assembly=Grading"
+      mc:Ignorable="d" 
+      d:DesignHeight="480" d:DesignWidth="640">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+        <TreeView Name="MainTree" ItemsSource="{Binding Grades}">
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type cat:Category}" ItemsSource="{Binding SubCategories}">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="("/>
+                        <TextBox Text="{Binding Weight, Mode=TwoWay}"/>
+                        <Label Content=")   "/>
+                        <Label Content="{Binding Name}"/>
+                        <Label Content="   "/>
+                        <Label Content="{Binding Grade}">
+                            <Label.Style>
+                                <Style TargetType="Label">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsLeaf}" Value="True">
+                                            <Setter Property="Visibility" Value="Hidden"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsLeaf}" Value="False">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Label.Style>
+                        </Label>
+                        <TextBox Text="{Binding Grade, Mode=TwoWay}">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsLeaf}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsLeaf}" Value="False">
+                                            <Setter Property="Visibility" Value="Hidden"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                        <Label Content="/100"/>
+                        <Button Content="+" Click="ShowNewCategoryFormButton_Click"/>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+        <StackPanel Name="NewCategoryForm" Grid.Column="1" Visibility="Hidden">
+            <Label Content="Please fill in the form for the new category"/>
+            <TextBox Text="{Binding NewCategoryName}"/>
+            <TextBox Text="{Binding NewCategoryMinGrade}"/>
+            <TextBox Text="{Binding NewCategoryMaxGrade}"/>
+            <TextBox Text="{Binding NewCategoryMinWeight}"/>
+            <TextBox Text="{Binding NewCategoryMaxWeight}"/>
+            <TextBox Text="{Binding NewCategoryWeight}"/>
+            <Button Content="Add" Click="AddNewCategoryButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Page>
