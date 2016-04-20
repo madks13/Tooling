@@ -40,9 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Metrics\Coordinates.cs" />
+    <Compile Include="Metrics\ICoordinates.cs" />
+    <Compile Include="Metrics\ISize.cs" />
+    <Compile Include="Metrics\Size.cs" />
+    <Compile Include="Noise\INoiseGenerator.cs" />
+    <Compile Include="Noise\Perlin.cs" />
     <Compile Include="Observable\IObservableProperties.cs" />
     <Compile Include="Observable\ObservableProperties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Random\StaticRandom.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

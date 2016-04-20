@@ -14,270 +14,106 @@ namespace Inventory.Models
     {
         #region Fields
 
-        private IEnumerable<IStorageSlot> _storage;
-        private ulong _maxSize;
-        private ulong _freeSlots;
-
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        protected Func<IStorable, Boolean> _priorities;
+        protected Func<IStorable, Boolean> _conditions;
+        protected IEnumerable<IStorageSlot> _storage;
 
         #endregion
 
         #region C/Dtor
 
-        public Storage(IEnumerable<IStorageSlot> storage, UInt64 size)
+        public Storage(Func<IStorable, Boolean> conditions = null, Func<IStorable, Boolean> priorities = null)
         {
-            _storage = storage;
-            _maxSize = size;
-            FreeSlots = _maxSize;
+            Priorities = priorities;
+            Conditions = conditions;
         }
 
         #endregion
-
-        #region Event listeners
-
-        private void Storage_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            IStorageSlot slot = sender as IStorageSlot;
-            switch (e.PropertyName)
-            {
-                case "Item":
-                    if (_maxSize > 0)
-                    {
-                        if (slot.Item == null)
-                        {
-                            FreeSlots += 1;
-                        }
-                        else
-                        {
-                            FreeSlots -= 1;
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        #endregion
-
-        #region IStorage 
 
         #region Properties
 
-        public UInt64 MaxSize
-        {
-            get
-            {
-                return _maxSize;
-            }
-        }
+        public abstract ulong FreeSlots { get; set; }
 
-        public UInt64 FreeSlots
+        public abstract ulong MaxSize { get; set; }
+
+        public Func<IStorable, bool> Conditions
         {
             get
             {
-                return _freeSlots;
+                return _conditions;
             }
             set
             {
-                SetField(ref _freeSlots, value);
+                SetField(ref _conditions, value);
+            }
+        }
+
+        public Func<IStorable, bool> Priorities
+        {
+            get
+            {
+                return _priorities;
+            }
+            set
+            {
+                SetField(ref _priorities, value);
             }
         }
 
         #endregion
 
-        #region Methods
+        #region Events
 
-        #region Private
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-        private IEnumerable<IStorageSlot> FindEmptySlots()
+        protected void OnCollectionChanged(NotifyCollectionChangedEventArgs a)
         {
-            return _storage.Where(s => s.Item == null);
-        }
-
-        private IStorageSlot GetEmptySlot()
-        {
-            return FindEmptySlots().FirstOrDefault();
-        }
-
-        private Boolean AddInEmptySlot(IStorable item, UInt64 amount)
-        {
-            if (FreeSlots > 0)
-            {
-                var emptySlot = GetEmptySlot();
-                if (emptySlot != null)
-                {
-                    emptySlot.SetItem(item, amount);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private Boolean AddInEmptySlot(IStorageSlot item)
-        {
-            return AddInEmptySlot(item.Item, item.Stack.Current);
-        }
-
-        private UInt64 AddStackable(IStorable item, UInt64 amount, Boolean cancelOnOver)
-        {
-            var left = amount;
-            var list = _storage.Where(i => i.Item != null && i.Item.IsSameType(item));
-
-            foreach (var element in list)
-            {
-                left = element.Add(left, cancelOnOver);
-                if (left <= 0)
-                {
-                    break;
-                }
-            }
-
-            if (left > 0)
-            {
-                amount = left;
-                var res = AddInEmptySlot(item, amount);
-                if (res)
-                {
-                    left = 0;
-                }
-            }
-            return left;
-        }
-
-        private UInt64 AddStackable(IStorageSlot item, Boolean cancelOnOver)
-        {
-            return AddStackable(item.Item, item.Stack.Current, cancelOnOver);
-        }
-
-        private UInt64 RemoveStackable(IStorable item, UInt64 amount, Boolean cancelOnUnder)
-        {
-            var left = amount;
-            var list = _storage.Where(i => i.Item != null && i.Item.IsSameType(item));
-
-            foreach (var element in list)
-            {
-                left = element.Remove(left, cancelOnUnder);
-                if (left <= 0)
-                {
-                    break;
-                }
-            }
-
-            return left;
+            CollectionChanged?.Invoke(this, a);
         }
 
         #endregion
 
-        #region Public
+        #region Conditions
 
-        #region Add
-
-        public UInt64 Add(IStorable item, UInt64 amount = 1, Boolean cancelOnOver = false)
+        public bool CheckConditions(IStorageSlot slot)
         {
-            if (item != null)
+            if (slot.Item == null)
             {
-                if (item.CanStack)
-                {
-                    amount = AddStackable(item, amount, cancelOnOver);
-                }
-                if (amount > 0)
-                {
-                    AddInEmptySlot(item, amount);
-                }
+                return false;
             }
-            return amount;
+            return CheckConditions(slot.Item);
         }
 
-        public UInt64 Add(IStorageSlot item, Boolean cancelOnOver = false)
+        public bool CheckConditions(IStorable storable)
         {
-            if (item != null
-                && item.Item != null)
+            if (Conditions == null)
             {
-                return Add(item.Item, item.Stack.Current, cancelOnOver);
-            }
-            return item.Stack.Current;
-        }
-
-        #endregion
-
-        #region Remove
-
-        public Boolean Remove(int index)
-        {
-            if (index >= 0 && index < _storage.Count())
-            {
-                _storage.ElementAt(index).SetItem(null);
                 return true;
             }
-            return false;
-        }
-
-        public UInt64 Remove(IStorable item, UInt64 amount = 1, Boolean cancelOnUnder = false)
-        {
-            if (item != null)
-            {
-                if (item.CanStack)
-                {
-                    amount = RemoveStackable(item, amount, cancelOnUnder);
-                }
-            }
-            return amount;
-        }
-
-        public UInt64 Remove(IStorageSlot item, Boolean cancelOnUnder = false)
-        {
-            if (item != null
-               && item.Item != null)
-            {
-                return Remove(item.Item, item.Stack.Current, cancelOnUnder);
-            }
-            return item.Stack.Current;
+            return _priorities.GetInvocationList().All(x => (bool)x.Method.Invoke(x.Target, new object[] { storable }));
         }
 
         #endregion
 
-        public int IndexOf(IStorageSlot item)
+        #region Priorities
+
+        public bool CheckPriorities(IStorageSlot slot)
         {
-            for (int i = 0; i < _storage.Count(); i++)
+            if (slot.Item == null)
             {
-                if (Object.ReferenceEquals(item, _storage.ElementAt(i)))
-                {
-                    return i;
-                }
+                return false;
             }
-            return -1;
+            return CheckPriorities(slot.Item);
         }
 
-        public Boolean Switch(IStorageSlot first, IStorageSlot second)
+        public bool CheckPriorities(IStorable storable)
         {
-            if (first != null
-                && second != null)
+            if (Priorities == null)
             {
-                if (!Object.ReferenceEquals(first, second))
-                {
-                    if (first.Item != null && second.Item != null && first.Item.IsSameType(second.Item))
-                    {
-                        second.Stack.Current = first.Add(second.Stack.Current);
-                        return true;
-                    }
-                    else if (first.Item != null
-                        || second.Item != null)
-                    {
-                        var tmpItem = first.Item;
-                        var tmpStack = first.Stack.Current;
-                        first.SetItem(second.Item, second.Stack.Current);
-                        second.SetItem(tmpItem, tmpStack);
-                        return true;
-                    }
-                }
+                return true;
             }
-            return false;
+            return _priorities.GetInvocationList().Any(x => (bool)x.Method.Invoke(x.Target, new object[] { storable }));
         }
-
-        #endregion
-
-        #endregion
 
         #endregion
 
@@ -285,16 +121,34 @@ namespace Inventory.Models
 
         public IEnumerator<IStorageSlot> GetEnumerator()
         {
+            return _storage.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
             foreach (IStorageSlot item in _storage)
             {
                 yield return item;
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _storage.GetEnumerator();
-        }
+        #endregion
+
+        #region Abstract
+        
+        public abstract ulong Add(IStorageSlot item, bool cancelOnOver = false);
+
+        public abstract ulong Add(IStorable item, ulong amount = 1, bool cancelOnOver = false);
+
+        public abstract int IndexOf(IStorageSlot item);
+
+        public abstract bool Remove(int index);
+
+        public abstract ulong Remove(IStorageSlot item, bool cancelOnUnder = false);
+
+        public abstract ulong Remove(IStorable item, ulong amount = 1, bool cancelOnUnder = false);
+
+        public abstract bool Switch(IStorageSlot first, IStorageSlot second);
 
         #endregion
     }

@@ -12,14 +12,8 @@ using System.Collections.Specialized;
 
 namespace Inventory
 {
-    public class ListStorage : ObservableProperties, IStorage
+    public class ListStorage : Storage
     {
-        #region Fields
-
-        private List<IStorageSlot> _storage;
-
-        #endregion
-
         #region C/Dtor
 
         public ListStorage()
@@ -28,18 +22,7 @@ namespace Inventory
         }
 
         #endregion
-
-        #region Events
-
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
-
-        private void OnCollectionChanged(NotifyCollectionChangedEventArgs a)
-        {
-            CollectionChanged?.Invoke(this, a);
-        }
-
-        #endregion
-
+        
         #region Event Listeners
 
         private void Slot_ItemChanged(object sender, EventArgs e)
@@ -55,19 +38,27 @@ namespace Inventory
 
         #region Properties
 
-        public UInt64 FreeSlots
+        public override UInt64 FreeSlots
         {
             get
             {
                 return 0;
             }
+            set
+            {
+
+            }
         }
 
-        public UInt64 MaxSize
+        public override UInt64 MaxSize
         {
             get
             {
                 return 0;
+            }
+            set
+            {
+
             }
         }
 
@@ -113,12 +104,12 @@ namespace Inventory
         {
             IStorageSlot newSlot = new StorageSlot(item, amount);
             newSlot.ItemChanged += Slot_ItemChanged; ;
-            _storage.Add(newSlot);
+            ((List<IStorageSlot>)_storage).Add(newSlot);
         }
         
         private void AddInEmptySlot(IStorageSlot item)
         {
-            _storage.Add(item);
+            ((List<IStorageSlot>)_storage).Add(item);
         }
 
         private UInt64 RemoveStackable(IStorable item, UInt64 amount, Boolean cancelOnUnder)
@@ -149,7 +140,7 @@ namespace Inventory
 
         #region Add
 
-        public ulong Add(IStorageSlot item, bool cancelOnOver = false)
+        public override ulong Add(IStorageSlot item, bool cancelOnOver = false)
         {
             if (item != null)
             {
@@ -164,7 +155,7 @@ namespace Inventory
             return 0;
         }
 
-        public ulong Add(IStorable item, ulong amount = 1, bool cancelOnOver = false)
+        public override ulong Add(IStorable item, ulong amount = 1, bool cancelOnOver = false)
         {
             if (item != null)
             {
@@ -191,9 +182,9 @@ namespace Inventory
 
         #region Remove
 
-        public bool Remove(int index)
+        public override bool Remove(int index)
         {
-            var res = _storage.Remove(_storage.ElementAt(index));
+            var res = ((List<IStorageSlot>)_storage).Remove(_storage.ElementAt(index));
             if (res)
             {
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
@@ -201,12 +192,12 @@ namespace Inventory
             return res;
         }
 
-        public ulong Remove(IStorageSlot item, bool cancelOnUnder = false)
+        public override ulong Remove(IStorageSlot item, bool cancelOnUnder = false)
         {
             if (item != null)
             {
                 var previous = item.Stack.Current;
-                var res = _storage.Remove(item);
+                var res = ((List<IStorageSlot>)_storage).Remove(item);
                 if (res)
                 {
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
@@ -218,7 +209,7 @@ namespace Inventory
             return 0;
         }
 
-        public ulong Remove(IStorable item, ulong amount = 1, bool cancelOnUnder = false)
+        public override ulong Remove(IStorable item, ulong amount = 1, bool cancelOnUnder = false)
         {
             if (item != null)
             {
@@ -234,12 +225,12 @@ namespace Inventory
 
         #endregion
 
-        public int IndexOf(IStorageSlot item)
+        public override int IndexOf(IStorageSlot item)
         {
-            return _storage.IndexOf(item);
+            return ((List<IStorageSlot>)_storage).IndexOf(item);
         }
-        
-        public bool Switch(IStorageSlot first, IStorageSlot second)
+
+        public override bool Switch(IStorageSlot first, IStorageSlot second)
         {
             if (first != null
                 && second != null)
@@ -271,24 +262,7 @@ namespace Inventory
             }
             return false;
         }
-
-        #region IEnumerable<IStorageSlot> interface
-
-        public IEnumerator<IStorageSlot> GetEnumerator()
-        {
-            foreach (IStorageSlot item in _storage)
-            {
-                yield return item;
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _storage.GetEnumerator();
-        }
-
-        #endregion
-
+        
         #endregion
     }
 }

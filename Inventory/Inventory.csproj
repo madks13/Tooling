@@ -46,6 +46,7 @@
     <Compile Include="Interfaces\IStorage.cs" />
     <Compile Include="Interfaces\IStorageSlot.cs" />
     <Compile Include="ListStorage.cs" />
+    <Compile Include="Models\ObservableStorage.cs" />
     <Compile Include="Models\Storable.cs" />
     <Compile Include="Models\Storage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

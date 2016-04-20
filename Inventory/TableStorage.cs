@@ -9,40 +9,42 @@ using System.Collections.Specialized;
 
 namespace Inventory
 {
-    public class TableStorage : ObservableProperties, IStorage
+    public class TableStorage : Storage
     {
         #region Fields
-
-        private IStorageSlot[] _storage;
+        
         private ulong _freeSlots;
 
         #endregion
 
         #region C/Dtor
 
-        public TableStorage(UInt64 size)
+        public TableStorage(UInt64 size, Func<IStorable, Boolean> conditions = null, Func<IStorable, Boolean> priorities = null) : base(conditions, priorities)
         {
             _storage = new IStorageSlot[size];
-            for (int i = 0; i < _storage.Length; i++)
+            var tmp = (IStorageSlot[])_storage;
+            for (int i = 0; i < tmp.Length; i++)
             {
-                _storage[i] = new StorageSlot(null);
-                _storage[i].ItemChanged += TableStorage_ItemChanged; ;
+                tmp[i] = new StorageSlot(null);
+                tmp[i].ItemChanged += TableStorage_ItemChanged; ;
             }
+
+
             FreeSlots = size;
         }
         
         #endregion
 
-        #region Events
+        //#region Events
 
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        //public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-        private void OnCollectionChanged(NotifyCollectionChangedEventArgs a)
-        {
-            CollectionChanged?.Invoke(this, a);
-        }
+        //private void OnCollectionChanged(NotifyCollectionChangedEventArgs a)
+        //{
+        //    CollectionChanged?.Invoke(this, a);
+        //}
 
-        #endregion
+        //#endregion
 
         #region Event listeners
 
@@ -65,15 +67,18 @@ namespace Inventory
 
         #region Properties
 
-        public UInt64 MaxSize
+        public override UInt64 MaxSize
         {
             get
             {
-                return (UInt64)_storage.Length;
+                return (UInt64)_storage.Count();
+            }
+            set
+            {
             }
         }
 
-        public UInt64 FreeSlots
+        public override UInt64 FreeSlots
         {
             get
             {
@@ -174,7 +179,7 @@ namespace Inventory
 
         #region Add
 
-        public UInt64 Add(IStorable item, UInt64 amount = 1, Boolean cancelOnOver = false)
+        public override UInt64 Add(IStorable item, UInt64 amount = 1, Boolean cancelOnOver = false)
         {
             if (item != null)
             {
@@ -194,7 +199,7 @@ namespace Inventory
             return amount;
         }
 
-        public UInt64 Add(IStorageSlot item, Boolean cancelOnOver = false)
+        public override UInt64 Add(IStorageSlot item, Boolean cancelOnOver = false)
         {
             if (item != null
                 && item.Item != null)
@@ -208,17 +213,17 @@ namespace Inventory
         
         #region Remove
 
-        public Boolean Remove(int index)
+        public override Boolean Remove(int index)
         {
-            if (index >= 0 && index < _storage.Length)
+            if (index >= 0 && index < _storage.Count())
             {
-                _storage[index].SetItem(null);
+                _storage.ElementAt(index).SetItem(null);
                 return true;
             }
             return false;
         }
 
-        public UInt64 Remove(IStorable item, UInt64 amount = 1, Boolean cancelOnUnder = false)
+        public override UInt64 Remove(IStorable item, UInt64 amount = 1, Boolean cancelOnUnder = false)
         {
             if (item != null)
             {
@@ -230,7 +235,7 @@ namespace Inventory
             return amount;
         }
 
-        public UInt64 Remove(IStorageSlot item, Boolean cancelOnUnder = false)
+        public override UInt64 Remove(IStorageSlot item, Boolean cancelOnUnder = false)
         {
             if (item != null
                && item.Item != null)
@@ -242,11 +247,11 @@ namespace Inventory
 
         #endregion
         
-        public int IndexOf(IStorageSlot item)
+        public override int IndexOf(IStorageSlot item)
         {
-            for (int i = 0; i < _storage.Length; i++)
+            for (int i = 0; i < _storage.Count(); i++)
             {
-                if (Object.ReferenceEquals(item, _storage[i]))
+                if (Object.ReferenceEquals(item, _storage.ElementAt(i)))
                 {
                     return i;
                 }
@@ -254,7 +259,7 @@ namespace Inventory
             return -1;
         }
 
-        public Boolean Switch(IStorageSlot first, IStorageSlot second)
+        public override Boolean Switch(IStorageSlot first, IStorageSlot second)
         {
             if (first != null
                 && second != null)
@@ -283,23 +288,6 @@ namespace Inventory
         #endregion
 
         #endregion
-
-        #endregion
-
-        #region IEnumerable<IStorageSlot> interface
-
-        public IEnumerator<IStorageSlot> GetEnumerator()
-        {
-            foreach (IStorageSlot item in _storage)
-            {
-                yield return item;
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _storage.GetEnumerator();
-        }
 
         #endregion
     }
