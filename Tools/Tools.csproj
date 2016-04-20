@@ -46,7 +46,9 @@
     <Compile Include="Metrics\ISize.cs" />
     <Compile Include="Metrics\Size.cs" />
     <Compile Include="Noise\INoiseGenerator.cs" />
+    <Compile Include="Noise\Models\Grad.cs" />
     <Compile Include="Noise\Perlin.cs" />
+    <Compile Include="Noise\Simplex.cs" />
     <Compile Include="Observable\IObservableProperties.cs" />
     <Compile Include="Observable\ObservableProperties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

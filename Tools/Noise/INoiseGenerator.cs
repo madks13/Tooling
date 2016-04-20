@@ -9,10 +9,10 @@ namespace Tools.Noise
 {
     public interface INoiseGenerator
     {
-        float[,] Generate(ulong seed);
+        void Seed(double seed);
 
-        float GetValueAtPoint(ICoordinates coords);
+        double GetValueAtPoint(ICoordinates coords);
 
-        float GetValueAtPoint(uint x, uint y);
+        double GetValueAtPoint(double x, double y);
     }
 }
