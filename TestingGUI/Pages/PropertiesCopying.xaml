@@ -1,0 +1,43 @@
+﻿<Page x:Class="TestingGUI.Pages.PropertiesCopying"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:TestingGUI.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="480" d:DesignWidth="640"
+      Title="PropertiesCopying">
+
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <Button Content="Copy" Click="Copy_Click" Name="Copy"></Button>
+            <Button Content="Change copy direction" Click="Direction_Click" Name="Direction" ></Button>
+            <StackPanel Orientation="Horizontal">
+                <Border BorderBrush="Blue" BorderThickness="1">
+                    <StackPanel Orientation="Vertical">
+                        <Label Content="{Binding ViewModel.Name}"/>
+                        <Label Content="{Binding ViewModel.Weight}"/>
+                        <Label Content="{Binding ViewModel.SubObjectName}"/>
+                        <Label Content="{Binding ViewModel.SubObjectValue}"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Green" BorderThickness="1">
+                    <StackPanel Orientation="Vertical">
+                        <Label Content="{Binding Object.Name}"/>
+                        <Label Content="{Binding Object.Weight}"/>
+                        <Label Content="{Binding Object.SubObject.Name}"/>
+                        <Label Content="{Binding Object.SubObject.Value}"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Red" BorderThickness="1">
+                    <StackPanel Orientation="Vertical">
+                        <Label Content="{Binding Object2.Name}"/>
+                        <Label Content="{Binding Object2.Weight}"/>
+                        <Label Content="{Binding Object2.SubObject.Name}"/>
+                        <Label Content="{Binding Object2.SubObject.Value}"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

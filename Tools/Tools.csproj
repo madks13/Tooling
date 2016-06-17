@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapters\NumberToBase.cs" />
+    <Compile Include="Dynamic\ObjectCopying\PropertiesCopying.cs" />
     <Compile Include="Metrics\Coordinates.cs" />
     <Compile Include="Metrics\ICoordinates.cs" />
     <Compile Include="Metrics\ISize.cs" />

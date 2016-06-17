@@ -11,7 +11,7 @@ namespace TestingGUI.Tools
 {
     public class MainDataContext : ObservableProperties
     {
-        private List<Page> _testingPages = new List<Page>() { new Pages.Grading(), new Pages.Inventory(), new Pages.Stats() };
+        private List<Page> _testingPages = new List<Page>() { new Pages.Grading(), new Pages.Inventory(), new Pages.Stats(), new Pages.PropertiesCopying() };
         
         public List<Page> Pages
         {

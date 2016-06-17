@@ -58,6 +58,9 @@
     <Compile Include="Pages\Inventory.xaml.cs">
       <DependentUpon>Inventory.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\PropertiesCopying.xaml.cs">
+      <DependentUpon>PropertiesCopying.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Stats.xaml.cs">
       <DependentUpon>Stats.xaml</DependentUpon>
     </Compile>
@@ -70,6 +73,7 @@
     <Compile Include="Tools\Inventory\ObservableCollection.cs" />
     <Compile Include="Tools\Inventory\Sword.cs" />
     <Compile Include="Tools\Main\MainDataContext.cs" />
+    <Compile Include="Tools\ObjectCopying\ObjectCopyingDataContext.cs" />
     <Compile Include="Tools\Stats\StatsDataContext.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -88,6 +92,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\Inventory.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\PropertiesCopying.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
