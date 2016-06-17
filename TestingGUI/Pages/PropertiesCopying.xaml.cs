@@ -34,12 +34,12 @@ namespace TestingGUI.Pages
             if (_objectCopyingDataContext.Direction)
             {
                 //ObjectCopying.CopyProperties(_objectCopyingDataContext.Object, _objectCopyingDataContext.ViewModel, "");
-                ObjectCopying.CopyProperties(_objectCopyingDataContext.Object, _objectCopyingDataContext.Object2, "");
+                ObjectCopying.CopyProperties(_objectCopyingDataContext.Object, _objectCopyingDataContext.Object2);
             }
             else
             {
                 //ObjectCopying.CopyProperties(_objectCopyingDataContext.ViewModel, _objectCopyingDataContext.Object, "");
-                ObjectCopying.CopyProperties(_objectCopyingDataContext.Object2, _objectCopyingDataContext.Object, "");
+                ObjectCopying.CopyProperties(_objectCopyingDataContext.Object2, _objectCopyingDataContext.Object);
             }
         }
 

@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Tools.Dynamic.ObjectCopying
 {
+    /// <summary>
+    /// Attribute indicating that the object contains properties to be copied
+    /// </summary>
     [AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = true)]
     public sealed class CopyablePropertyAttribute : Attribute
     {
@@ -31,6 +34,9 @@ namespace Tools.Dynamic.ObjectCopying
         }
     }
 
+    /// <summary>
+    /// Attribute indicating that the value can be copied and where to copy it
+    /// </summary>
     [AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = true)]
     public sealed class PropertyPathAttribute : Attribute
     {
@@ -56,7 +62,7 @@ namespace Tools.Dynamic.ObjectCopying
             get { return _type; }
         }
     }
-
+    
     public static class ObjectCopying
     {
         public static object GetDeepPropertyValue(object instance, string path)
@@ -76,6 +82,13 @@ namespace Tools.Dynamic.ObjectCopying
             return instance;
         }
 
+        /// <summary>
+        /// This function will copy the "value" into the "entity"'s property marked by the "path"
+        /// </summary>
+        /// <param name="entity">The targeted object</param>
+        /// <param name="value">The value to copy into entity</param>
+        /// <param name="path">The path to the entity property</param>
+        /// <returns>True if succeeded copying, otherwise false</returns>
         public static bool CopyValueToProperty(object entity, object value, string path)
         {
             var pp = path.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
@@ -114,25 +127,15 @@ namespace Tools.Dynamic.ObjectCopying
 
             return false;
         }
-
-        /*
-         get from prop list
-         for each
-         {
-             if (subobject)
-             {
-                copyprop(prop.getvalue, to, basepath + att.path)
-             }
-             else
-             {
-                copyvaluetoprop(to, value, basepath + '.' + att.path)
-             }
-         }
-
-        return to
-        */
         
-        public static object CopyProperties(object from, object to, string basePath)
+        /// <summary>
+        /// This function copies all copyable properties from an object into another object
+        /// </summary>
+        /// <param name="from">The source of values</param>
+        /// <param name="to">The receiver of values</param>
+        /// <param name="basePath">The base path, used for recursive calling</param>
+        /// <returns>The receiver, whether copy was successfull or not</returns>
+        public static object CopyProperties(object from, object to, string basePath = @"")
         {
             if (from != null && to != null)
             {
